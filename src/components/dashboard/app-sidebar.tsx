@@ -3,9 +3,9 @@ import * as React from "react";
 import {
   HelpCircleIcon,
   Boxes,
-  BookOpen,
+  
   LayoutDashboardIcon,
-  FolderIcon,
+  
   Home,
 } from "lucide-react";
 import { useLocation, Link } from "react-router-dom";

@@ -40,7 +40,7 @@ interface UserInfo {
   isPremium: boolean;
 }
 
-// Mock user data - bạn có thể thay thế bằng dữ liệu thực từ localStorage hoặc context
+
 const getMockUserData = (): UserInfo => {
   // Kiểm tra localStorage trước
   const storedUser = localStorage.getItem('userInfo');
