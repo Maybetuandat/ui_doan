@@ -1,6 +1,6 @@
-// src/components/labs/lab-header.tsx
 import React from "react";
 import { Plus, RefreshCw, Boxes } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,6 +25,8 @@ export function LabHeader({
   loading = false,
   totalLabs 
 }: LabHeaderProps) {
+  const { t } = useTranslation('common');
+
   return (
     <div className="space-y-6">
       {/* Breadcrumb */}
@@ -33,13 +35,13 @@ export function LabHeader({
           <BreadcrumbItem>
             <BreadcrumbLink href="/" className="flex items-center gap-1">
               <Boxes className="h-4 w-4" />
-              Trang chủ
+              {t('navigation.home')}
             </BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
             <BreadcrumbPage className="font-medium">
-              Quản lý Labs
+              {t('labs.labManagement')}
             </BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
@@ -49,11 +51,11 @@ export function LabHeader({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold tracking-tight">
-            Quản lý Labs
+            {t('labs.labManagement')}
           </h1>
           <p className="text-muted-foreground">
-            Tạo và quản lý các lab templates cho hệ thống. 
-            Hiện có <span className="font-medium text-foreground">{totalLabs}</span> lab.
+            {t('labs.labManagementDescription')} {' '}
+            
           </p>
         </div>
         
@@ -66,7 +68,7 @@ export function LabHeader({
             className="gap-2"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-            Làm mới
+            {t('labs.refresh')}
           </Button>
           
           <Button
@@ -75,7 +77,7 @@ export function LabHeader({
             className="gap-2"
           >
             <Plus className="h-4 w-4" />
-            Tạo Lab mới
+            {t('labs.createNewLab')}
           </Button>
         </div>
       </div>

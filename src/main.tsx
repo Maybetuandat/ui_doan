@@ -1,5 +1,5 @@
-// src/main.tsx
-// Fix for sockjs-client global variable issue
+
+
 if (typeof (globalThis as any).global === "undefined") {
   (globalThis as any).global = globalThis;
 }

@@ -1,9 +1,9 @@
-// src/components/labs/lab-card.tsx (Updated)
 import React from "react";
 import { Clock, Settings, Trash2, Power, PowerOff, Info, ExternalLink } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale";
+import { vi, enUS } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import {
   Card,
@@ -46,16 +46,18 @@ export function LabCard({
   loading = false,
 }: LabCardProps) {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation('common');
 
   const formatCreatedAt = (dateString: string) => {
     try {
       const date = new Date(dateString);
+      const locale = i18n.language === 'vi' ? vi : enUS;
       return formatDistanceToNow(date, { 
         addSuffix: true, 
-        locale: vi 
+        locale 
       });
     } catch {
-      return "Không xác định";
+      return t('labs.unknownDate');
     }
   };
 
@@ -74,120 +76,85 @@ export function LabCard({
               </CardTitle>
               <CardDescription className="mt-1 flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">
-                  Tạo {formatCreatedAt(lab.createdAt)}
+                  {t('labs.created')} {formatCreatedAt(lab.createdAt)}
                 </span>
                 <Badge 
                   variant={lab.isActive ? "default" : "secondary"}
                   className="text-xs"
                 >
-                  {lab.isActive ? "Hoạt động" : "Tạm dừng"}
+                  {lab.isActive ? t('labs.active') : t('labs.inactive')}
                 </Badge>
               </CardDescription>
             </div>
-            
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                  disabled={loading}
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <Settings className="h-4 w-4" />
-                  <span className="sr-only">Tùy chọn</span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[160px]">
-                <DropdownMenuItem onClick={handleViewDetails}>
-                  <ExternalLink className="mr-2 h-4 w-4" />
-                  Xem chi tiết
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onEdit(lab)}>
-                  <Settings className="mr-2 h-4 w-4" />
-                  Chỉnh sửa
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => onToggleStatus(lab)}>
-                  {lab.isActive ? (
-                    <>
-                      <PowerOff className="mr-2 h-4 w-4" />
-                      Tạm dừng
-                    </>
-                  ) : (
-                    <>
-                      <Power className="mr-2 h-4 w-4" />
-                      Kích hoạt
-                    </>
-                  )}
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-3" onClick={handleViewDetails}>
+        <CardContent className="pb-3">
           {lab.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2">
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
               {lab.description}
             </p>
           )}
-          
-          <div className="flex flex-wrap gap-2 text-xs">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Badge variant="outline" className="gap-1">
-                  <Clock className="h-3 w-3" />
-                  {lab.estimatedTime}p
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Thời gian ước tính: {lab.estimatedTime} phút</p>
-              </TooltipContent>
-            </Tooltip>
+
+          {/* Lab specs */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" />
+              <span>{lab.estimatedTime} {t('labs.minutes')}</span>
+            </div>
             
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Badge variant="outline" className="font-mono text-xs">
-                  {lab.baseImage}
-                </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Base Docker Image</p>
-              </TooltipContent>
-            </Tooltip>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <Settings className="h-3 w-3" />
+              <span className="font-mono truncate">{lab.baseImage}</span>
+            </div>
           </div>
         </CardContent>
 
-        <CardFooter className="pt-3 border-t">
-          <div className="flex w-full gap-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleViewDetails();
-              }}
-              disabled={loading}
-            >
-              <Info className="mr-2 h-4 w-4" />
-              Chi tiết
-            </Button>
-            <Button 
-              variant="default" 
-              size="sm" 
-              className="flex-1"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(lab);
-              }}
-              disabled={loading}
-            >
-              <Settings className="mr-2 h-4 w-4" />
-              Chỉnh sửa
-            </Button>
-          </div>
+        <CardFooter className="pt-0 flex items-center justify-between">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleViewDetails}
+            className="gap-1 text-xs"
+          >
+            <Info className="h-3 w-3" />
+            {t('labs.details')}
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="sm" disabled={loading}>
+                <Settings className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onEdit(lab)}>
+                <Settings className="mr-2 h-4 w-4" />
+                {t('common.edit')}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onToggleStatus(lab)}>
+                {lab.isActive ? (
+                  <>
+                    <PowerOff className="mr-2 h-4 w-4" />
+                    {t('labs.deactivate')}
+                  </>
+                ) : (
+                  <>
+                    <Power className="mr-2 h-4 w-4" />
+                    {t('labs.activate')}
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={() => onDelete(lab)}
+                className="text-destructive focus:text-destructive"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                {t('common.delete')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </CardFooter>
       </Card>
     </TooltipProvider>

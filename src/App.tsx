@@ -2,7 +2,7 @@ import "./App.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { MainLayout } from "./layouts/MainLayout";
 
-
+import "./i18n"; 
 
 import Lab from "./app/labs/Lab";
 import HomePage from "./app/home";

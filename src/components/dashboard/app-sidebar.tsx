@@ -1,4 +1,3 @@
-// src/components/dashboard/app-sidebar.tsx
 import * as React from "react";
 import {
   HelpCircleIcon,
@@ -40,7 +39,7 @@ export function AppSidebar({
         isActive: location.pathname === "/" || location.pathname === "/home",
       },
       {
-        title: t("navigation.assignment"),
+        title: t("navigation.labs"),
         url: "/labs",
         icon: LayoutDashboardIcon,
         isActive: location.pathname === "/labs",

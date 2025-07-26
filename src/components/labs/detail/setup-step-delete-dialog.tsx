@@ -1,4 +1,3 @@
-// src/components/labs/detail/setup-step-delete-dialog.tsx
 import React from "react";
 import { Trash2, AlertTriangle, Loader2, Terminal } from "lucide-react";
 

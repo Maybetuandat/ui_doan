@@ -1,4 +1,3 @@
-// src/components/dashboard/nav-user.tsx
 import {
   LogOutIcon,
   MoreVerticalIcon,

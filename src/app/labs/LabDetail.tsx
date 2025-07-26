@@ -1,4 +1,3 @@
-// src/app/labs/LabDetail.tsx
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "sonner";

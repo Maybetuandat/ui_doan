@@ -1,9 +1,9 @@
-// src/components/labs/detail/lab-detail-header.tsx
 import React from "react";
 import { ArrowLeft, Edit, Power, PowerOff, Trash2, Clock, Calendar } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
-import { vi } from "date-fns/locale";
+import { vi, enUS } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -40,16 +40,18 @@ export function LabDetailHeader({
   loading = false,
 }: LabDetailHeaderProps) {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation('common');
 
   const formatCreatedAt = (dateString: string) => {
     try {
       const date = new Date(dateString);
+      const locale = i18n.language === 'vi' ? vi : enUS;
       return formatDistanceToNow(date, { 
         addSuffix: true, 
-        locale: vi 
+        locale 
       });
     } catch {
-      return "Không xác định";
+      return t('labs.unknownDate');
     }
   };
 
@@ -59,11 +61,11 @@ export function LabDetailHeader({
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink href="/">Trang chủ</BreadcrumbLink>
+            <BreadcrumbLink href="/">{t('navigation.home')}</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
-            <BreadcrumbLink href="/labs">Quản lý Labs</BreadcrumbLink>
+            <BreadcrumbLink href="/labs">{t('labs.labManagement')}</BreadcrumbLink>
           </BreadcrumbItem>
           <BreadcrumbSeparator />
           <BreadcrumbItem>
@@ -97,7 +99,7 @@ export function LabDetailHeader({
                   variant={lab.isActive ? "default" : "secondary"}
                   className="shrink-0"
                 >
-                  {lab.isActive ? "Hoạt động" : "Tạm dừng"}
+                  {lab.isActive ? t('labs.active') : t('labs.inactive')}
                 </Badge>
               </div>
               
@@ -113,11 +115,11 @@ export function LabDetailHeader({
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-1">
               <Calendar className="h-4 w-4" />
-              <span>Tạo {formatCreatedAt(lab.createdAt)}</span>
+              <span>{t('labs.created')} {formatCreatedAt(lab.createdAt)}</span>
             </div>
             <div className="flex items-center gap-1">
               <Clock className="h-4 w-4" />
-              <span>{lab.estimatedTime} phút</span>
+              <span>{lab.estimatedTime} {t('labs.minutes')}</span>
             </div>
           </div>
         </div>
@@ -131,13 +133,13 @@ export function LabDetailHeader({
             className="gap-2"
           >
             <Edit className="h-4 w-4" />
-            Chỉnh sửa
+            {t('common.edit')}
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" disabled={loading}>
-                Thao tác
+                {t('labs.actions')}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -145,12 +147,12 @@ export function LabDetailHeader({
                 {lab.isActive ? (
                   <>
                     <PowerOff className="mr-2 h-4 w-4" />
-                    Tạm dừng
+                    {t('labs.deactivate')}
                   </>
                 ) : (
                   <>
                     <Power className="mr-2 h-4 w-4" />
-                    Kích hoạt
+                    {t('labs.activate')}
                   </>
                 )}
               </DropdownMenuItem>
@@ -160,7 +162,7 @@ export function LabDetailHeader({
                 className="text-destructive focus:text-destructive"
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Xóa lab
+                {t('labs.deleteLab')}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

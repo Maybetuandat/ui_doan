@@ -1,6 +1,6 @@
-// src/components/labs/detail/setup-steps-list.tsx
 import React from "react";
 import { Plus, ListOrdered, AlertCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import {
   Card,
@@ -32,6 +32,7 @@ export function SetupStepsList({
   onMoveStepDown,
   loading = false,
 }: SetupStepsListProps) {
+  const { t } = useTranslation('common');
   const sortedSteps = [...steps].sort((a, b) => a.stepOrder - b.stepOrder);
 
   return (
@@ -41,15 +42,15 @@ export function SetupStepsList({
           <div className="space-y-1">
             <CardTitle className="flex items-center gap-2">
               <ListOrdered className="h-5 w-5" />
-              Setup Steps
+              {t('labs.setupSteps')}
               {steps.length > 0 && (
                 <span className="text-sm font-normal text-muted-foreground">
-                  ({steps.length} bước)
+                  ({steps.length} {t('labs.steps')})
                 </span>
               )}
             </CardTitle>
             <CardDescription>
-              Các bước thiết lập sẽ được thực hiện theo thứ tự khi khởi tạo lab
+              {t('labs.setupStepsDescription')}
             </CardDescription>
           </div>
           
@@ -59,7 +60,7 @@ export function SetupStepsList({
             className="gap-2"
           >
             <Plus className="h-4 w-4" />
-            Thêm Step
+            {t('labs.addStep')}
           </Button>
         </div>
       </CardHeader>
@@ -92,7 +93,7 @@ export function SetupStepsList({
                 className="gap-2 border-dashed"
               >
                 <Plus className="h-4 w-4" />
-                Thêm step mới
+                {t('labs.addNewStep')}
               </Button>
             </div>
           </div>
@@ -109,6 +110,8 @@ function EmptyStepsState({
   onCreateStep: () => void;
   loading: boolean;
 }) {
+  const { t } = useTranslation('common');
+
   return (
     <div className="text-center py-12">
       <div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted mx-auto mb-4">
@@ -116,12 +119,11 @@ function EmptyStepsState({
       </div>
       
       <h3 className="text-lg font-semibold mb-2">
-        Chưa có setup steps
+        {t('labs.noSetupSteps')}
       </h3>
       
       <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-        Tạo các bước thiết lập tự động để chuẩn bị môi trường lab. 
-        Các steps sẽ được thực hiện theo thứ tự.
+        {t('labs.noSetupStepsDescription')}
       </p>
       
       <Button 
@@ -130,17 +132,16 @@ function EmptyStepsState({
         className="gap-2"
       >
         <Plus className="h-4 w-4" />
-        Tạo setup step đầu tiên
+        {t('labs.createFirstStep')}
       </Button>
       
       <div className="mt-8 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 max-w-md mx-auto">
         <div className="flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 shrink-0" />
           <div className="text-sm text-blue-800 dark:text-blue-200">
-            <p className="font-medium mb-1">Mẹo:</p>
+            <p className="font-medium mb-1">{t('labs.tip')}:</p>
             <p>
-              Setup steps thường bao gồm cài đặt phần mềm, cấu hình hệ thống, 
-              hoặc tải về tài nguyên cần thiết cho lab.
+              {t('labs.setupStepsTip')}
             </p>
           </div>
         </div>

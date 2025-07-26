@@ -1,7 +1,7 @@
-// src/app/labs/Lab.tsx
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { LabHeader } from "@/components/labs/lab-header";
 import { LabFilterBar, LabFilters } from "@/components/labs/lab-filter-bar";
@@ -14,6 +14,8 @@ import { labService } from "@/services/labService";
 import { Lab, CreateLabRequest, UpdateLabRequest } from "@/types/lab";
 
 export default function LabPage() {
+  const { t } = useTranslation('common');
+  
   // State management
   const [labs, setLabs] = useState<Lab[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,15 +42,15 @@ export default function LabPage() {
       setLabs(data);
       
       if (showToast) {
-        toast.success("Đã tải lại danh sách labs");
+        toast.success(t('labs.refreshSuccess'));
       }
     } catch (error) {
       console.error("Failed to fetch labs:", error);
-      toast.error("Không thể tải danh sách labs");
+      toast.error(t('labs.loadError'));
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   // Load data on mount
   useEffect(() => {
@@ -100,15 +102,15 @@ export default function LabPage() {
       setActionLoading(true);
       const newLab = await labService.createLab(data);
       setLabs(prev => [newLab, ...prev]);
-      toast.success(`Lab "${newLab.name}" đã được tạo thành công`);
+      toast.success(t('labs.createSuccess', { name: newLab.name }));
     } catch (error) {
       console.error("Failed to create lab:", error);
-      toast.error("Không thể tạo lab mới");
-      throw error; // Re-throw to prevent dialog close
+      toast.error(t('labs.createError'));
+      throw error;
     } finally {
       setActionLoading(false);
     }
-  }, []);
+  }, [t]);
 
   // Update lab handler
   const handleUpdateLab = useCallback(async (data: UpdateLabRequest) => {
@@ -117,19 +119,16 @@ export default function LabPage() {
     try {
       setActionLoading(true);
       const updatedLab = await labService.updateLab(editingLab.id, data);
-      setLabs(prev => prev.map(lab => 
-        lab.id === editingLab.id ? updatedLab : lab
-      ));
-      toast.success(`Lab "${updatedLab.name}" đã được cập nhật`);
-      setEditingLab(null);
+      setLabs(prev => prev.map(l => l.id === editingLab.id ? updatedLab : l));
+      toast.success(t('labs.updateSuccess', { name: updatedLab.name }));
     } catch (error) {
       console.error("Failed to update lab:", error);
-      toast.error("Không thể cập nhật lab");
-      throw error; // Re-throw to prevent dialog close
+      toast.error(t('labs.updateError'));
+      throw error;
     } finally {
       setActionLoading(false);
     }
-  }, [editingLab]);
+  }, [editingLab, t]);
 
   // Delete lab handler
   const handleDeleteLab = useCallback(async () => {
@@ -138,36 +137,36 @@ export default function LabPage() {
     try {
       setActionLoading(true);
       await labService.deleteLab(deletingLab.id);
-      setLabs(prev => prev.filter(lab => lab.id !== deletingLab.id));
-      toast.success(`Lab "${deletingLab.name}" đã được xóa`);
-      setDeletingLab(null);
+      setLabs(prev => prev.filter(l => l.id !== deletingLab.id));
+      toast.success(t('labs.deleteSuccess', { name: deletingLab.name }));
     } catch (error) {
       console.error("Failed to delete lab:", error);
-      toast.error("Không thể xóa lab");
-      throw error; // Re-throw to prevent dialog close
+      toast.error(t('labs.deleteError'));
+      throw error;
     } finally {
       setActionLoading(false);
     }
-  }, [deletingLab]);
+  }, [deletingLab, t]);
 
   // Toggle lab status handler
   const handleToggleStatus = useCallback(async (lab: Lab) => {
     try {
       setActionLoading(true);
       const updatedLab = await labService.toggleLabStatus(lab.id);
-      setLabs(prev => prev.map(l => 
-        l.id === lab.id ? updatedLab : l
-      ));
+      setLabs(prev => prev.map(l => l.id === lab.id ? updatedLab : l));
       toast.success(
-        `Lab "${lab.name}" đã được ${updatedLab.isActive ? 'kích hoạt' : 'tạm dừng'}`
+        t('labs.toggleStatusSuccess', { 
+          name: lab.name, 
+          status: updatedLab.isActive ? t('labs.activated') : t('labs.deactivated')
+        })
       );
     } catch (error) {
       console.error("Failed to toggle lab status:", error);
-      toast.error("Không thể thay đổi trạng thái lab");
+      toast.error(t('labs.toggleStatusError'));
     } finally {
       setActionLoading(false);
     }
-  }, []);
+  }, [t]);
 
   // Dialog handlers
   const openCreateDialog = () => {
@@ -183,11 +182,6 @@ export default function LabPage() {
   const openDeleteDialog = (lab: Lab) => {
     setDeletingLab(lab);
     setDeleteDialogOpen(true);
-  };
-
-  const handleViewDetails = (lab: Lab) => {
-    // TODO: Navigate to lab details page
-    toast.info(`Xem chi tiết lab: ${lab.name}`);
   };
 
   const clearFilters = () => {
@@ -222,7 +216,7 @@ export default function LabPage() {
       {loading ? (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-          <span className="ml-2 text-muted-foreground">Đang tải labs...</span>
+          <span className="ml-2 text-muted-foreground">{t('labs.loadingLabs')}</span>
         </div>
       ) : filteredLabs.length === 0 ? (
         <LabEmptyState
@@ -240,7 +234,6 @@ export default function LabPage() {
               onEdit={openEditDialog}
               onDelete={openDeleteDialog}
               onToggleStatus={handleToggleStatus}
-              onViewDetails={handleViewDetails}
               loading={actionLoading}
             />
           ))}

@@ -1,9 +1,9 @@
-// src/components/labs/lab-form-dialog.tsx
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import {
   Dialog,
@@ -33,15 +33,15 @@ import {
 } from "@/components/ui/select";
 import { Lab, CreateLabRequest, UpdateLabRequest } from "@/types/lab";
 
-
-const labFormSchema = z.object({
-  name: z.string().min(1, "Tên lab không được để trống"),
+// Schema với validation messages từ translation
+const createLabFormSchema = (t: any) => z.object({
+  name: z.string().min(1, t('labs.validation.nameRequired')),
   description: z.string().optional(),
-  baseImage: z.string().min(1, "Base image không được để trống"),
-  estimatedTime: z.number().min(1, "Thời gian ước tính phải ít nhất 1 phút").max(600, "Thời gian ước tính không được vượt quá 600 phút"),
+  baseImage: z.string().min(1, t('labs.validation.baseImageRequired')),
+  estimatedTime: z.number()
+    .min(1, t('labs.validation.timeMin'))
+    .max(600, t('labs.validation.timeMax')),
 });
-
-type LabFormData = z.infer<typeof labFormSchema>;
 
 interface LabFormDialogProps {
   open: boolean;
@@ -68,7 +68,11 @@ export function LabFormDialog({
   onSubmit,
   loading = false,
 }: LabFormDialogProps) {
+  const { t } = useTranslation('common');
   const isEditMode = !!lab;
+  
+  const labFormSchema = createLabFormSchema(t);
+  type LabFormData = z.infer<typeof labFormSchema>;
 
   const form = useForm<LabFormData>({
     resolver: zodResolver(labFormSchema),
@@ -124,12 +128,12 @@ export function LabFormDialog({
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
-            {isEditMode ? "Chỉnh sửa Lab" : "Tạo Lab mới"}
+            {isEditMode ? t('labs.editLab') : t('labs.createLab')}
           </DialogTitle>
           <DialogDescription>
             {isEditMode
-              ? "Cập nhật thông tin lab của bạn."
-              : "Tạo một lab template mới cho hệ thống."}
+              ? t('labs.editLabDescription')
+              : t('labs.createLabDescription')}
           </DialogDescription>
         </DialogHeader>
 
@@ -140,10 +144,10 @@ export function LabFormDialog({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Tên Lab *</FormLabel>
+                  <FormLabel>{t('labs.labName')} *</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Nhập tên lab..."
+                      placeholder={t('labs.labNamePlaceholder')}
                       {...field}
                       disabled={loading}
                     />
@@ -158,17 +162,17 @@ export function LabFormDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Mô tả</FormLabel>
+                  <FormLabel>{t('labs.description')}</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Mô tả chi tiết về lab..."
+                      placeholder={t('labs.descriptionPlaceholder')}
                       rows={3}
                       {...field}
                       disabled={loading}
                     />
                   </FormControl>
                   <FormDescription>
-                    Mô tả chi tiết về mục đích và nội dung của lab
+                    {t('labs.descriptionHelper')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -180,7 +184,7 @@ export function LabFormDialog({
               name="baseImage"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Base Image *</FormLabel>
+                  <FormLabel>{t('labs.baseImage')} *</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
@@ -188,7 +192,7 @@ export function LabFormDialog({
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn base image..." />
+                        <SelectValue placeholder={t('labs.selectBaseImage')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -200,7 +204,7 @@ export function LabFormDialog({
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    Docker image sẽ được sử dụng làm môi trường base
+                    {t('labs.baseImageHelper')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -212,20 +216,18 @@ export function LabFormDialog({
               name="estimatedTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thời gian ước tính (phút) *</FormLabel>
+                  <FormLabel>{t('labs.estimatedTime')} ({t('labs.minutes')}) *</FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       placeholder="60"
                       {...field}
-                      onChange={(e) => field.onChange(Number(e.target.value))}
+                      onChange={(e) => field.onChange(parseInt(e.target.value))}
                       disabled={loading}
-                      min={1}
-                      max={600}
                     />
                   </FormControl>
                   <FormDescription>
-                    Thời gian ước tính để hoàn thành lab (1-600 phút)
+                    {t('labs.estimatedTimeHelper')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -233,17 +235,16 @@ export function LabFormDialog({
             />
 
             <div className="flex justify-end gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
+              <Button 
+                variant="outline" 
                 onClick={() => handleOpenChange(false)}
                 disabled={loading}
               >
-                Hủy
+                {t('common.cancel')}
               </Button>
               <Button type="submit" disabled={loading}>
                 {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isEditMode ? "Cập nhật" : "Tạo mới"}
+                {isEditMode ? t('common.save') : t('labs.createLab')}
               </Button>
             </div>
           </form>

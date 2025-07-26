@@ -1,6 +1,6 @@
-// src/components/labs/lab-filter-bar.tsx
 import React from "react";
 import { Search, Filter, X } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,8 @@ export function LabFilterBar({
   totalCount,
   loading = false,
 }: LabFilterBarProps) {
+  const { t } = useTranslation('common');
+
   const handleSearchChange = (value: string) => {
     onFiltersChange({ ...filters, search: value });
   };
@@ -73,7 +75,7 @@ export function LabFilterBar({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Tìm kiếm lab theo tên hoặc mô tả..."
+            placeholder={t('labs.searchPlaceholder')}
             value={filters.search}
             onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-10"
@@ -81,117 +83,59 @@ export function LabFilterBar({
           />
         </div>
 
-        {/* Filter controls */}
-        <div className="flex gap-2">
-          <Select 
-            value={filters.status} 
-            onValueChange={handleStatusChange}
-            disabled={loading}
-          >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Tất cả</SelectItem>
-              <SelectItem value="active">Đang hoạt động</SelectItem>
-              <SelectItem value="inactive">Tạm dừng</SelectItem>
-            </SelectContent>
-          </Select>
+        {/* Status filter */}
+        <Select value={filters.status} onValueChange={handleStatusChange}>
+          <SelectTrigger className="w-full sm:w-[160px]">
+            <SelectValue placeholder={t('labs.statusFilter')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">{t('labs.allStatus')}</SelectItem>
+            <SelectItem value="active">{t('labs.active')}</SelectItem>
+            <SelectItem value="inactive">{t('labs.inactive')}</SelectItem>
+          </SelectContent>
+        </Select>
 
-          <Select 
-            value={filters.sortBy} 
-            onValueChange={handleSortChange}
-            disabled={loading}
-          >
-            <SelectTrigger className="w-[140px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Mới nhất</SelectItem>
-              <SelectItem value="oldest">Cũ nhất</SelectItem>
-              <SelectItem value="name">Tên A-Z</SelectItem>
-              <SelectItem value="estimatedTime">Thời gian</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {hasActiveFilters && (
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={clearFilters}
-              disabled={loading}
-              className="shrink-0"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Xóa bộ lọc</span>
-            </Button>
-          )}
-        </div>
+        {/* Sort filter */}
+        <Select value={filters.sortBy} onValueChange={handleSortChange}>
+          <SelectTrigger className="w-full sm:w-[160px]">
+            <SelectValue placeholder={t('labs.sortBy')} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="newest">{t('labs.newest')}</SelectItem>
+            <SelectItem value="oldest">{t('labs.oldest')}</SelectItem>
+            <SelectItem value="name">{t('labs.nameSort')}</SelectItem>
+            <SelectItem value="estimatedTime">{t('labs.timeSort')}</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Results summary and active filters */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      {/* Results count and active filters */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Hiển thị {totalCount} lab</span>
-          {hasActiveFilters && (
-            <Badge variant="secondary" className="ml-2">
-              <Filter className="mr-1 h-3 w-3" />
-              {activeFilterCount} bộ lọc
-            </Badge>
-          )}
+          
         </div>
 
+        {/* Active filters */}
         {hasActiveFilters && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={clearFilters}
-            disabled={loading}
-            className="text-xs"
-          >
-            <X className="mr-1 h-3 w-3" />
-            Xóa tất cả bộ lọc
-          </Button>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-muted-foreground" />
+              <Badge variant="secondary" className="gap-1">
+                {activeFilterCount} {t('labs.activeFilters')}
+              </Badge>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={clearFilters}
+              className="gap-1 text-xs h-7"
+            >
+              <X className="h-3 w-3" />
+              {t('labs.clearFilters')}
+            </Button>
+          </div>
         )}
       </div>
-
-      {/* Active filters display */}
-      {hasActiveFilters && (
-        <div className="flex flex-wrap gap-2">
-          {filters.search && (
-            <Badge variant="outline" className="gap-1">
-              Tìm kiếm: "{filters.search}"
-              <X 
-                className="h-3 w-3 cursor-pointer hover:text-destructive" 
-                onClick={() => handleSearchChange("")}
-              />
-            </Badge>
-          )}
-          
-          {filters.status !== "all" && (
-            <Badge variant="outline" className="gap-1">
-              Trạng thái: {filters.status === "active" ? "Hoạt động" : "Tạm dừng"}
-              <X 
-                className="h-3 w-3 cursor-pointer hover:text-destructive" 
-                onClick={() => handleStatusChange("all")}
-              />
-            </Badge>
-          )}
-          
-          {filters.sortBy !== "newest" && (
-            <Badge variant="outline" className="gap-1">
-              Sắp xếp: {
-                filters.sortBy === "oldest" ? "Cũ nhất" :
-                filters.sortBy === "name" ? "Tên A-Z" : "Thời gian"
-              }
-              <X 
-                className="h-3 w-3 cursor-pointer hover:text-destructive" 
-                onClick={() => handleSortChange("newest")}
-              />
-            </Badge>
-          )}
-        </div>
-      )}
     </div>
   );
 }

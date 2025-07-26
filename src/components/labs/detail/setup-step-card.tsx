@@ -1,4 +1,3 @@
-// src/components/labs/detail/setup-step-card.tsx
 import React from "react";
 import { 
   ChevronUp, 
