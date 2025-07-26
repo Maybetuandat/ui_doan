@@ -1,7 +1,7 @@
 // src/services/setupStepService.ts
 import { SetupStep, CreateSetupStepRequest, UpdateSetupStepRequest } from '@/types/setupStep';
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 export const setupStepService = {
   // Create setup step for a lab

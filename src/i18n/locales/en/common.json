@@ -125,5 +125,19 @@
     },
     "openSettings": "Open settings",
     "customizePreferences": "Customize your preferences"
+  },
+   "labs": {
+    "title": "Labs List",
+    "loadError": "Unable to load lab information",
+    "updateSuccess": "Lab updated successfully",
+    "updateError": "Failed to update lab",
+    "deleteSuccess": "Lab deleted successfully",
+    "deleteError": "Failed to delete lab", 
+    "noLabsFound": "No labs found",
+    "loading": "Loading...",
+    "setupSteps": "Setup Steps",
+    "addStep": "Add Step",
+    "editStep": "Edit Step", 
+    "deleteStep": "Delete Step"
   }
 } 

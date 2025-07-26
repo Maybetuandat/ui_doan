@@ -125,5 +125,19 @@
     },
     "openSettings": "Mở cài đặt",
     "customizePreferences": "Tùy chỉnh các tùy chọn của bạn"
+  },
+   "labs": {
+    "title": "Danh sách Labs",
+    "loadError": "Không thể tải thông tin lab",
+    "updateSuccess": "Cập nhật lab thành công",
+    "updateError": "Cập nhật lab thất bại",
+    "deleteSuccess": "Xóa lab thành công", 
+    "deleteError": "Xóa lab thất bại",
+    "noLabsFound": "Không tìm thấy lab nào",
+    "loading": "Đang tải...",
+    "setupSteps": "Các bước thiết lập",
+    "addStep": "Thêm bước",
+    "editStep": "Sửa bước",
+    "deleteStep": "Xóa bước"
   }
 }

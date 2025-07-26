@@ -1,6 +1,6 @@
 import { CreateLabRequest, Lab, UpdateLabRequest } from "@/types/lab";
 
-const API_BASE_URL = 'http://localhost:8080/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 export const labService = {
   // Get all labs or filter by active status
   getLabs: async (isActivate?: boolean): Promise<Lab[]> => {
