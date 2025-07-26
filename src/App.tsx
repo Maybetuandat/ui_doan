@@ -6,6 +6,7 @@ import { MainLayout } from "./layouts/MainLayout";
 
 import Lab from "./app/labs/Lab";
 import HomePage from "./app/home";
+import LabDetail from "./app/labs/LabDetail";
 
 function App() {
   return (
@@ -46,6 +47,14 @@ function App() {
               
             }
           />
+           <Route
+          path="/labs/:id"
+          element={
+            <MainLayout>
+              <LabDetail />
+            </MainLayout>
+          }
+        />
 
          </Routes>
       </Router>
